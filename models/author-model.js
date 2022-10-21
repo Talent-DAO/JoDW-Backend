@@ -25,6 +25,7 @@ const Author = new Schema(
     times_cited: { type: Number, required: true },
     popularCategories: { type: Array, required: false },
     notifications: { type: Array, required: false },
+    lensProfileId: { type: String, required: false },
   },
   { timestamps: true }
 );
