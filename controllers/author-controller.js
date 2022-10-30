@@ -12,7 +12,8 @@ createAuthor = (req, res) => {
     coverImage: req.body.coverImage,
     readers: req.body.readers,
     times_cited: req.body.times_cited,
-    popularCategories: req.body.popularCategories
+    popularCategories: req.body.popularCategories,
+    lensProfileId: req.body.lensProfileId,
   }, (err) => {
     if (err) {
       return res.status(400).json({ success: false, error: err });
@@ -50,10 +51,11 @@ updateAuthor = async (req, res) => {
     linkedin: req.body.linkedin,
     walletId: req.body.tipAddress,
     authorImage: req.body.authorImage,
-    coverImage: req.body.authorCoverImage,
+    coverImage: req.body.coverImage,
     readers: req.body.readers,
     times_cited: req.body.times_cited,
-    popularCategories: req.body.popularCategories
+    popularCategories: req.body.popularCategories,
+    lensProfileId: req.body.lensProfileId,
   }, (err, author) => {
     if(err) {
       return res.status(400).json({success: false, error: err})
