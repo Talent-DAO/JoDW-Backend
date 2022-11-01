@@ -18,6 +18,7 @@ const Article = new Schema(
     blockchain: { type: String, required: true },
     categories: { type: Array, required: false },
     arweaveHash: { type: String, required: true },
+    lensCompatibleIpfsMetadata: { type: String, required: true },
   },
   { timestamps: true }
 );

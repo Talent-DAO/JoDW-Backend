@@ -13,6 +13,7 @@ createArticle = (req, res) => {
       blockchain: req.body.blockchain,
       categories: req.body.categories,
       arweaveHash: req.body.arweaveHash,
+      lensCompatibleIpfsMetadata: req.body.lensCompatibleIpfsMetadata,
     },
     (err) => {
       if (err) {
