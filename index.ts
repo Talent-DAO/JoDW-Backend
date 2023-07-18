@@ -1,6 +1,7 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
 const { connection, collections } = require("./db");
 const authorRouter = require("./routes/author-router");
