@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:alpine3.18
+    user: ${UID}:${GID}
+    environment:
+      - POSTGRES_PASSWORD=localpw
+      - POSTGRES_USER=localguy
+      - POSTGRES_DB=jodw
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./environments/local/data:/var/lib/postgresql/data:rw
+    ports:
+      - 5432:5432

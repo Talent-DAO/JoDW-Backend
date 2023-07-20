@@ -1,0 +1,230 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id                     Int                      @id @default(autoincrement())
+  authorId               Int
+  title                  String                   @db.VarChar(255)
+  image                  String?
+  content                String
+  published              Boolean                  @default(false)
+  createdAt              DateTime                 @default(now()) @db.Timestamp(6)
+  lastUpdatedAt          DateTime                 @default(now()) @db.Timestamp(6)
+  user                   User                     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  articleAuthors         ArticleAuthor[]
+  articleRevisionHistory ArticleRevisionHistory[]
+  articleTopics          ArticleTopic[]
+  reviewComments         ReviewComment[]
+}
+
+model ArticleAuthor {
+  articleId Int
+  authorId  Int
+  order     Int
+  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      User    @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([articleId, authorId])
+}
+
+model ArticleRevisionHistory {
+  id        Int      @id @default(autoincrement())
+  articleId Int?
+  changedBy Int?
+  content   String?
+  timestamp DateTime @default(now()) @db.Timestamp(6)
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      User?    @relation(fields: [changedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([articleId, changedBy])
+}
+
+model ArticleTopic {
+  articleId Int
+  topicId   Int
+  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  topic     Topic   @relation(fields: [topicId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([articleId, topicId])
+}
+
+model Category {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique @db.VarChar(100)
+  description   String?
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  lastUpdatedAt DateTime  @default(now()) @db.Timestamp(6)
+  subjects      Subject[]
+}
+
+model Chain {
+  id            Int                   @id @default(autoincrement())
+  networkid     Int?
+  name          String                @unique @db.VarChar(80)
+  metadata      Json
+  status        EntityLifecycleState? @default(draft)
+  createdAt     DateTime              @default(now()) @db.Timestamp(6)
+  lastUpdatedAt DateTime              @default(now()) @db.Timestamp(6)
+  network       Network?              @relation(fields: [networkid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users         User[]
+}
+
+model Network {
+  id            Int                   @id @default(autoincrement())
+  name          String                @unique @db.VarChar(80)
+  metadata      Json
+  status        EntityLifecycleState? @default(draft)
+  createdAt     DateTime              @default(now()) @db.Timestamp(6)
+  lastUpdatedAt DateTime              @default(now()) @db.Timestamp(6)
+  chains        Chain[]
+}
+
+model Permission {
+  id                  Int                  @id @default(autoincrement())
+  name                String               @unique @db.VarChar(100)
+  description         String?
+  createdAt           DateTime             @default(now()) @db.Timestamp(6)
+  lastUpdatedAt       DateTime             @default(now()) @db.Timestamp(6)
+  resourcePermissions ResourcePermission[]
+  rolePermissions     RolePermission[]
+}
+
+model Profile {
+  userid        Int      @id
+  profilepic    String?
+  bio           String?
+  coverimg      String?
+  socials       Json?    @default("{}")
+  lastUpdatedAt DateTime @default(now()) @db.Timestamp(6)
+  user          User     @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Resource {
+  id                  Int                  @id @default(autoincrement())
+  name                String               @unique @db.VarChar(100)
+  description         String?
+  createdAt           DateTime             @default(now()) @db.Timestamp(6)
+  lastUpdatedAt       DateTime             @default(now()) @db.Timestamp(6)
+  resourcePermissions ResourcePermission[]
+}
+
+model ResourcePermission {
+  resourceId   Int
+  permissionId Int
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  resource     Resource   @relation(fields: [resourceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([resourceId, permissionId])
+}
+
+model ReviewComment {
+  id         Int      @id @default(autoincrement())
+  articleId  Int?
+  reviewerId Int?
+  threadId   Int?
+  metadata   Json?    @default("{}")
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  article    Article? @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user       User?    @relation(fields: [reviewerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  thread     Thread?  @relation(fields: [threadId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Role {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(100)
+  description    String?
+  createdAt      DateTime         @default(now()) @db.Timestamp(6)
+  lastUpdatedAt  DateTime         @default(now()) @db.Timestamp(6)
+  rolePermission RolePermission[]
+  userRole       UserRole[]
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([roleId, permissionId])
+}
+
+model Subject {
+  id            Int       @id @default(autoincrement())
+  categoryId    Int?
+  name          String    @unique @db.VarChar(100)
+  description   String?
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  lastUpdatedAt DateTime  @default(now()) @db.Timestamp(6)
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  topics        Topic[]
+}
+
+model Thread {
+  id             Int             @id @default(autoincrement())
+  ancestors      Int[]
+  entityType     String          @db.VarChar(20)
+  entityId       Int
+  authorId       Int?
+  published      Boolean         @default(true)
+  content        String?
+  createdAt      DateTime        @default(now()) @db.Timestamp(6)
+  reviewComments ReviewComment[]
+  user           User?           @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Topic {
+  id            Int            @id @default(autoincrement())
+  subjectId     Int?
+  name          String         @unique @db.VarChar(100)
+  description   String?
+  createdAt     DateTime       @default(now()) @db.Timestamp(6)
+  lastUpdatedAt DateTime       @default(now()) @db.Timestamp(6)
+  articleTopics ArticleTopic[]
+  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model User {
+  id                     Int                      @id @default(autoincrement())
+  chainid                Int?
+  address                String                   @db.VarChar(110)
+  status                 UserLifecycleState?      @default(active)
+  createdAt              DateTime                 @default(now()) @db.Timestamp(6)
+  lastUpdatedAt          DateTime                 @default(now()) @db.Timestamp(6)
+  articles               Article[]
+  articleAuthors         ArticleAuthor[]
+  articleRevisionHistory ArticleRevisionHistory[]
+  profile                Profile?
+  reviewComments         ReviewComment[]
+  threads                Thread[]
+  Chain                  Chain?                   @relation(fields: [chainid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userRoles              UserRole[]
+
+  @@unique([chainid, address])
+}
+
+model UserRole {
+  userId Int
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user   User @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([userId, roleId])
+}
+
+enum EntityLifecycleState {
+  draft
+  active
+  inactive
+}
+
+enum UserLifecycleState {
+  active
+  inactive
+  banned
+}
