@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node ./dist/index.js",
+    "seed": "ts-node prisma/seed.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
   },
@@ -30,6 +31,7 @@
     "concurrently": "^8.2.0",
     "docker-compose": "^0.24.1",
     "prisma": "^5.0.0",
+    "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   }
 }

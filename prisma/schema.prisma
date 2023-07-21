@@ -65,13 +65,13 @@ model Category {
 
 model Chain {
   id            Int                   @id @default(autoincrement())
-  networkid     Int?
+  networkId     Int?
   name          String                @unique @db.VarChar(80)
   metadata      Json
   status        EntityLifecycleState? @default(draft)
   createdAt     DateTime              @default(now()) @db.Timestamp(6)
   lastUpdatedAt DateTime              @default(now()) @db.Timestamp(6)
-  network       Network?              @relation(fields: [networkid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  network       Network?              @relation(fields: [networkId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users         User[]
 }
 
@@ -97,6 +97,7 @@ model Permission {
 
 model Profile {
   userid        Int      @id
+  name          String   @default("")
   profilepic    String?
   bio           String?
   coverimg      String?
@@ -191,7 +192,7 @@ model Topic {
 
 model User {
   id                     Int                      @id @default(autoincrement())
-  chainid                Int?
+  chainId                Int?
   address                String                   @db.VarChar(110)
   status                 UserLifecycleState?      @default(active)
   createdAt              DateTime                 @default(now()) @db.Timestamp(6)
@@ -202,10 +203,10 @@ model User {
   profile                Profile?
   reviewComments         ReviewComment[]
   threads                Thread[]
-  Chain                  Chain?                   @relation(fields: [chainid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Chain                  Chain?                   @relation(fields: [chainId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userRoles              UserRole[]
 
-  @@unique([chainid, address])
+  @@unique([chainId, address])
 }
 
 model UserRole {
