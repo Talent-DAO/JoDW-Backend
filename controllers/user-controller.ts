@@ -18,11 +18,11 @@ const createUser = (req: Request, res: Response) => {
       },
     },
   })
-  .then(() => res.status(200).json({ success: true, data: "Author was created successfully." }))
-  .catch((err: any) => {
-    console.error(err);
-    res.status(400).json({ success: false, error: err })
-  })
+    .then(() => res.status(200).json({ success: true, data: "Author was created successfully." }))
+    .catch((err: any) => {
+      console.error(err);
+      res.status(400).json({ success: false, error: err })
+    })
 };
 
 const getUsers = (req: Request, res: Response) => {
@@ -82,19 +82,51 @@ const getUsers = (req: Request, res: Response) => {
     }
 
     filter = {
-      where: {...chainPredicate, ...namePredicate}
+      where: { ...chainPredicate, ...namePredicate }
     }
   }
 
-  prisma.user.findMany({...query, ...cursor, ...filter})
-  .then((items: [any]) => res.status(200).json({ success: true, data: items, next: items[items.length - 1]?.id }))
-  .catch((err: any) => {
-    console.error(err);
-    res.status(400).json({ success: false, error: err });
-  })
+  prisma.user.findMany({ ...query, ...cursor, ...filter })
+    .then((items: [any]) => res.status(200).json({ success: true, data: items, next: items[items.length - 1]?.id }))
+    .catch((err: any) => {
+      console.error(err);
+      res.status(400).json({ success: false, error: err });
+    })
 };
+
+const getByUserId = (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.status(400).json({ success: false, error: "A user ID must be specified!" })
+    return;
+  }
+
+  prisma.user.findUnique({
+    where: {
+      id: parseInt(req.params.id),
+    },
+    select: {
+      id: true,
+      chainId: true,
+      address: true,
+      status: true,
+      profile: {
+        select: {
+          name: true,
+          profilepic: true,
+          bio: true,
+        }
+      },
+    },
+  })
+    .then((user: any) => res.status(200).json({ success: true, data: user }))
+    .catch((err: any) => {
+      console.error(err);
+      res.status(400).json({ success: false, error: err })
+    })
+}
 
 module.exports = {
   createUser,
   getUsers,
+  getByUserId,
 }

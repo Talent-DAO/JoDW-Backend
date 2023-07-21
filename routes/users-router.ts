@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get("/users", UserController.getUsers);
 router.post("/users", UserController.createUser);
+router.get("/users/:id", UserController.getByUserId);
 // router.put("/author_readers", AuthorController.updateAuthorReaders);
 // router.put("/author", AuthorController.updateAuthor)
 // router.put("/author_times", AuthorController.updateTimes)
