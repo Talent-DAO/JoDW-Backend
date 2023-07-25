@@ -18,7 +18,7 @@ const createUser = (req: Request, res: Response) => {
       },
     },
   })
-    .then(() => res.status(200).json({ success: true, data: "Author was created successfully." }))
+    .then((item: any) => res.status(200).json({ success: true, data: item }))
     .catch((err: any) => {
       console.error(err);
       res.status(400).json({ success: false, error: err })
