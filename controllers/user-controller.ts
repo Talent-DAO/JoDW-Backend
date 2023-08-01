@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-const { prisma } = require('../db');
+import { prisma } from '../db/index.js';
 
 const createUser = (req: Request, res: Response) => {
 
@@ -125,8 +125,10 @@ const getByUserId = (req: Request, res: Response) => {
     })
 }
 
-module.exports = {
+const UserController = {
   createUser,
   getUsers,
   getByUserId,
 }
+
+export default UserController;

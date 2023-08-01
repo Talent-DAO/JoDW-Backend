@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Document" ADD COLUMN     "md5hash" VARCHAR(32) NOT NULL DEFAULT '0',
+ADD COLUMN     "size" INTEGER NOT NULL DEFAULT -1;

@@ -1,14 +1,19 @@
-const express = require("express");
+import express from "express";
+import multer from 'multer';
+import ArweaveStorageEngine from "../storage/arweave/ArweaveStorageEngine.js";
 
-const ArticleController = require("../controllers/article-controller");
+// handle file uploads
+const upload = multer({ storage: new ArweaveStorageEngine() }).single('doc')
+
+import ArticleController from "../controllers/article-controller.js";
 
 const router = express.Router();
 
-router.post("/articles", ArticleController.createArticle);
+router.post("/articles", upload, ArticleController.createArticle);
 // router.put("/article/walletId", ArticleController.updateArticle);
 // router.delete("/article/walletId", ArticleController.deleteArticle);
 // router.get("/articles", ArticleController.getArticles);
 // router.get("/articles_latest", ArticleController.getLatestArticles);
 // router.get("/article_find", ArticleController.getArticlesByField);
 
-module.exports = router;
+export default router;

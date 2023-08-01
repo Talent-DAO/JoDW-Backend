@@ -11,8 +11,8 @@ model Article {
   id              Int                      @id @default(autoincrement())
   authorId        Int
   title           String                   @db.VarChar(255)
-  image           String?
-  content         String
+  imageId         Int
+  contentId       Int
   published       Boolean                  @default(false)
   createdAt       DateTime                 @default(now()) @db.Timestamp(6)
   lastUpdatedAt   DateTime                 @default(now()) @db.Timestamp(6)
@@ -21,6 +21,8 @@ model Article {
   revisionHistory ArticleRevisionHistory[]
   topics          ArticleTopic[]
   reviewComments  ReviewComment[]
+  image           Document                 @relation(name: "imageDoc", fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  content         Document                 @relation(name: "contentDoc", fields: [contentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model ArticleAuthor {
@@ -156,12 +158,12 @@ model RolePermission {
 }
 
 model Subject {
-  id            Int       @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   categoryId    Int
-  name          String    @unique @db.VarChar(100)
+  name          String   @unique @db.VarChar(100)
   description   String?
-  createdAt     DateTime  @default(now()) @db.Timestamp(6)
-  lastUpdatedAt DateTime  @default(now()) @db.Timestamp(6)
+  createdAt     DateTime @default(now()) @db.Timestamp(6)
+  lastUpdatedAt DateTime @default(now()) @db.Timestamp(6)
   category      Category @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   topics        Topic[]
 }
@@ -187,7 +189,7 @@ model Topic {
   createdAt     DateTime       @default(now()) @db.Timestamp(6)
   lastUpdatedAt DateTime       @default(now()) @db.Timestamp(6)
   articleTopics ArticleTopic[]
-  subject       Subject       @relation(fields: [subjectId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model User {
@@ -203,6 +205,7 @@ model User {
   profile                Profile?
   reviewComments         ReviewComment[]
   threads                Thread[]
+  documents              Document[]
   Chain                  Chain?                   @relation(fields: [chainId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userRoles              UserRole[]
 
@@ -216,6 +219,20 @@ model UserRole {
   user   User @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([userId, roleId])
+}
+
+model Document {
+  id              Int       @id @default(autoincrement())
+  uploader        Int
+  url             String    @db.VarChar(2500)
+  contentType     String    @db.VarChar(18)
+  size            Int       @default(-1)
+  md5hash         String    @default("0") @db.VarChar(32)
+  createdAt       DateTime  @default(now()) @db.Timestamp(6)
+  lastUpdatedAt   DateTime  @default(now()) @db.Timestamp(6)
+  user            User      @relation(fields: [uploader], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  articleContents Article[] @relation("contentDoc")
+  articleImages   Article[] @relation("imageDoc")
 }
 
 enum EntityLifecycleState {

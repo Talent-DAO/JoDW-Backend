@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
-const { prisma } = require('../db');
+import { prisma } from '../db/index.js';
 
 const createArticle = (req: Request, res: Response) => {
-  prisma.user.create({
+  // TODO: validate content types for image & content by looking at document
+  // TODO: validate author matches document owner/uploader
+  prisma.article.create({
     data: {
       title: req.body.title,
-      image: req.body.image,
-      content: req.body.content,
+      imageId: req.body.imageId,
+      contentId: req.body.contentId,
       published: false,
-      user: req.body.userId, // replace with current user based on auth info,
+      authorId: req.body.authorId, // replace with current user based on auth info,
       topics: {
         create: req.body.topics.map((topicId: Number) => { topicId })
       }
@@ -21,6 +23,8 @@ const createArticle = (req: Request, res: Response) => {
     })
 }
 
-module.exports = {
+const ArticleController = {
   createArticle,
 }
+
+export default ArticleController;

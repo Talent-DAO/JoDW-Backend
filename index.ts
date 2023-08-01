@@ -1,11 +1,10 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-const { prisma } = require('./db');
 
-const usersRouter = require("./routes/users-router");
-// const articleRouter = require("./routes/article-router");
+import usersRouter from "./routes/users-router.js";
+import articleRouter from "./routes/article-router.js";
+import documentRouter from "./routes/document-router.js";
 // const contactRouter = require("./routes/contact-router");
 
 const app = express();
@@ -21,7 +20,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1", usersRouter);
-// app.use("/api/v1", articleRouter);
+app.use("/api/v1", articleRouter);
+app.use("/api/v1", documentRouter);
 // app.use("/api/v1", contactRouter);
 
 app.listen(process.env.PORT || apiPort, () => {
