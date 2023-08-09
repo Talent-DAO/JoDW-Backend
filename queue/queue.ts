@@ -78,7 +78,9 @@ export const initializeQueue = () => {
   poller = setInterval(async () => {
     dequeue()
       .then(items => {
-        console.info("Received ", items?.length, " items")
+        if (items?.length > 0) {
+          console.info("Received ", items?.length, " items")
+        }
         items.forEach(item => {
           console.log("Processing item: ", item);
           subscriptions.get(item.channel)?.forEach(handler => handler(item));
