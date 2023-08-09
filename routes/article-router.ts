@@ -10,7 +10,7 @@ import ArticleController from "../controllers/article-controller.js";
 const router = express.Router();
 
 router.post("/articles", upload, ArticleController.createArticle);
-// router.put("/article/walletId", ArticleController.updateArticle);
+router.put("/articles/:articleId", ArticleController.updateArticle);
 // router.delete("/article/walletId", ArticleController.deleteArticle);
 // router.get("/articles", ArticleController.getArticles);
 // router.get("/articles_latest", ArticleController.getLatestArticles);

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from '../db/index.js';
+import prisma from '../db/index.js';
 
 const createDocument = (req: Request, res: Response) => {
   

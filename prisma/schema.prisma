@@ -23,6 +23,16 @@ model Article {
   reviewComments  ReviewComment[]
   image           Document                 @relation(name: "imageDoc", fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   content         Document                 @relation(name: "contentDoc", fields: [contentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ArticleNft      ArticleNft[]
+}
+
+model ArticleNft {
+  articleId     Int      @id
+  signedTx      Bytes
+  address       String?
+  createdAt     DateTime @default(now()) @db.Timestamp(6)
+  lastUpdatedAt DateTime @default(now()) @db.Timestamp(6)
+  article       Article  @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model ArticleAuthor {
@@ -233,6 +243,13 @@ model Document {
   user            User      @relation(fields: [uploader], references: [id], onDelete: NoAction, onUpdate: NoAction)
   articleContents Article[] @relation("contentDoc")
   articleImages   Article[] @relation("imageDoc")
+}
+
+model Queue {
+  id         Int      @id @default(autoincrement())
+  enqueuedAt DateTime @default(now()) @db.Timestamp(6)
+  channel    String   @db.VarChar(64)
+  payload    Bytes
 }
 
 enum EntityLifecycleState {
