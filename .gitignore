@@ -105,3 +105,5 @@ dist
 
 # local database data
 environments/local/data/pgdata
+
+.DS_Store

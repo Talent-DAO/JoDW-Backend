@@ -9,6 +9,7 @@ const createDocument = (req: Request, res: Response) => {
       url: req.file?.filename || '',
       contentType: req.file?.mimetype || '',
       size: req.file?.size || 0,
+      // @ts-ignore
       md5hash: req.file?.md5hash || '',
     },
   })

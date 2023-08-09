@@ -42,11 +42,11 @@ const enqueue = (channel: string, payload: any) => {
 const dequeue = async () => {
   const queueItems = await prisma.$queryRaw<QueueItem[]>`
     DELETE FROM
-      queue
+      "Queue"
     USING (
-      SELECT * FROM queue LIMIT 10 FOR UPDATE SKIP LOCKED
+      SELECT * FROM "Queue" LIMIT 10 FOR UPDATE SKIP LOCKED
     ) q
-    WHERE q.id = queue.id RETURNING queue.*;
+    WHERE q.id = "Queue".id RETURNING "Queue".*;
   `
 
   return queueItems?.map(item => {
@@ -78,7 +78,7 @@ export const initializeQueue = () => {
   poller = setInterval(async () => {
     dequeue()
       .then(items => {
-        console.log("Received ", items?.length, " items")
+        console.info("Received ", items?.length, " items")
         items.forEach(item => {
           console.log("Processing item: ", item);
           subscriptions.get(item.channel)?.forEach(handler => handler(item));

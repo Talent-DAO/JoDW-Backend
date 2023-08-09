@@ -86,8 +86,10 @@ const getUsers = (req: Request, res: Response) => {
     }
   }
 
+  // @ts-ignore
   prisma.user.findMany({ ...query, ...cursor, ...filter })
-    .then((items: [any]) => res.status(200).json({ success: true, data: items, next: items[items.length - 1]?.id }))
+    // @ts-ignore
+    .then((items: [any]) => res.status(200).json({ success: true, data: items, next: items?.length > 0 ? items[items.length - 1].id : null }))
     .catch((err: any) => {
       console.error(err);
       res.status(400).json({ success: false, error: err });
